@@ -1,8 +1,4 @@
-import os
-import shutil
-from utils import get_category
-
-def organize_files(path):
+def organize_files(path, dry_run=False):
     if not os.path.exists(path):
         print("Invalid path")
         return
@@ -14,10 +10,13 @@ def organize_files(path):
             category = get_category(file)
             target_dir = os.path.join(path, category)
 
-            if not os.path.exists(target_dir):
-                os.makedirs(target_dir)
-
             target_path = os.path.join(target_dir, file)
 
-            shutil.move(full_path, target_path)
-            print(f"Moved {file} -> {category}/")
+            if dry_run:
+                print(f"[DRY RUN] {file} -> {category}/")
+            else:
+                if not os.path.exists(target_dir):
+                    os.makedirs(target_dir)
+
+                shutil.move(full_path, target_path)
+                print(f"Moved {file} -> {category}/")
