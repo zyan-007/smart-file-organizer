@@ -10,3 +10,7 @@ def get_category(file_name):
             return category
 
     return "Others"
+
+def log_action(message):
+    with open("organizer.log", "a") as f:
+        f.write(message + "\n")
