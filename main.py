@@ -11,3 +11,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+parser.add_argument("--dry-run", action="store_true", help="Preview changes")
+
+organize_files(args.path, dry_run=args.dry_run)
