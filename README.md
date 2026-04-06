@@ -2,6 +2,8 @@
 
 A Python CLI tool to automatically organize files into folders.
 
+it is completely written in python
+
 ## Features
 - Sort files by type
 - Dry run mode
