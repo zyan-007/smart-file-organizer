@@ -1,12 +1,24 @@
-def organize_files(path, dry_run=False):
+import os
+import shutil
+from utils import get_category, log_action
+
+IGNORE_FOLDERS = {"Images", "Documents", "Videos", "Audio", "Code", "Others"}
+
+
+def organize_files(path, dry_run=False, recursive=False):
     if not os.path.exists(path):
         print("Invalid path")
         return
 
-    files = os.listdir(path)
+    for item in os.listdir(path):
+        full_path = os.path.join(path, item)
 
-    for file in files:
-        process_file(path, file, dry_run)
+        if os.path.isdir(full_path):
+            if recursive and item not in IGNORE_FOLDERS:
+                organize_files(full_path, dry_run, recursive)
+            continue
+
+        process_file(path, item, dry_run)
 
 
 def process_file(base_path, file, dry_run):
