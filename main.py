@@ -1,3 +1,4 @@
+'''main file'''
 import argparse
 from organizer import organize_files
 
