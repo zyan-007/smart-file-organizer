@@ -5,3 +5,5 @@ FILE_CATEGORIES = {
     "Audio": [".mp3", ".wav"],
     "Code": [".py", ".cpp", ".js", ".html", ".css"],
 }
+
+IGNORE_FOLDERS = set(FILE_CATEGORIES.keys()) | {"Others"}
