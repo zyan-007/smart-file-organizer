@@ -2,8 +2,7 @@ import os
 import shutil
 from utils import get_category, log_action
 
-IGNORE_FOLDERS = {"Images", "Documents", "Videos", "Audio", "Code", "Others"}
-
+from config import IGNORE_FOLDERS
 
 def organize_files(path, dry_run=False, recursive=False):
     if not os.path.exists(path):
@@ -49,3 +48,23 @@ def process_file(base_path, file, dry_run):
 
     except Exception as e:
         print(f"Error processing {file}: {e}")
+
+def organize_files(path, dry_run=False, recursive=False):
+    if not os.path.exists(path):
+        print("Invalid path")
+        return
+
+    count = 0
+
+    for item in os.listdir(path):
+        full_path = os.path.join(path, item)
+
+        if os.path.isdir(full_path):
+            if recursive and item not in IGNORE_FOLDERS:
+                organize_files(full_path, dry_run, recursive)
+            continue
+
+        if process_file(path, item, dry_run):
+            count += 1
+
+    print(f"\nProcessed {count} files in: {path}")
