@@ -1,6 +1,6 @@
-'''main file'''
 import argparse
 from organizer import organize_files
+
 
 def main():
     parser = argparse.ArgumentParser(description="Smart File Organizer")
@@ -16,6 +16,7 @@ def main():
         dry_run=args.dry_run,
         recursive=args.recursive
     )
+
 
 if __name__ == "__main__":
     main()
