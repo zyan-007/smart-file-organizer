@@ -2,6 +2,7 @@ import os
 import shutil
 from utils import get_category, log_action
 from config import load_config, get_ignore_folders
+from history import record_move
 
 
 def organize_files(path, dry_run=False, recursive=False):
@@ -51,8 +52,13 @@ def process_file(base_path, file, categories, dry_run):
             return False
 
         shutil.move(full_path, target_path)
+
+        # record move for undo
+        record_move(full_path, target_path)
+
         print(f"Moved {file} -> {category}/")
         log_action(f"Moved {file} -> {category}/")
+
         return True
 
     except Exception as e:
