@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 
 def get_category(file_name, categories):
@@ -18,9 +19,6 @@ def log_action(message):
 
 
 def get_unique_filename(path):
-    """
-    If file exists, append (1), (2), etc.
-    """
     base, ext = os.path.splitext(path)
     counter = 1
 
@@ -30,3 +28,9 @@ def get_unique_filename(path):
         counter += 1
 
     return new_path
+
+
+def get_file_date(file_path):
+    timestamp = os.path.getmtime(file_path)
+    dt = datetime.fromtimestamp(timestamp)
+    return dt.strftime("%Y"), dt.strftime("%m")
