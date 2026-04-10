@@ -1,11 +1,11 @@
 import os
 import shutil
-from utils import get_category, log_action
+from utils import get_category, log_action, get_unique_filename
 from config import load_config, get_ignore_folders
 from history import record_move
 
 
-def organize_files(path, dry_run=False, recursive=False):
+def organize_files(path, dry_run=False, recursive=False, min_size=0):
     if not os.path.exists(path):
         print("Invalid path")
         return
@@ -20,19 +20,23 @@ def organize_files(path, dry_run=False, recursive=False):
 
         if os.path.isdir(full_path):
             if recursive and item not in ignore_folders:
-                organize_files(full_path, dry_run, recursive)
+                organize_files(full_path, dry_run, recursive, min_size)
             continue
 
-        if process_file(path, item, categories, dry_run):
+        if process_file(path, item, categories, dry_run, min_size):
             count += 1
 
     print(f"\nProcessed {count} files in: {path}")
 
 
-def process_file(base_path, file, categories, dry_run):
+def process_file(base_path, file, categories, dry_run, min_size):
     full_path = os.path.join(base_path, file)
 
     if not os.path.isfile(full_path):
+        return False
+
+    # size filter
+    if os.path.getsize(full_path) < min_size:
         return False
 
     category = get_category(file, categories)
@@ -47,13 +51,11 @@ def process_file(base_path, file, categories, dry_run):
         if not os.path.exists(target_dir):
             os.makedirs(target_dir)
 
-        if os.path.exists(target_path):
-            print(f"Skipping {file}, already exists")
-            return False
+        # handle duplicates
+        target_path = get_unique_filename(target_path)
 
         shutil.move(full_path, target_path)
 
-        # record move for undo
         record_move(full_path, target_path)
 
         print(f"Moved {file} -> {category}/")
