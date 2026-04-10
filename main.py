@@ -10,6 +10,7 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="Preview changes")
     parser.add_argument("--recursive", action="store_true", help="Include subfolders")
     parser.add_argument("--undo", action="store_true", help="Undo last operation")
+    parser.add_argument("--min-size", type=int, default=0, help="Minimum file size in bytes")
 
     args = parser.parse_args()
 
@@ -24,7 +25,8 @@ def main():
     organize_files(
         args.path,
         dry_run=args.dry_run,
-        recursive=args.recursive
+        recursive=args.recursive,
+        min_size=args.min_size
     )
 
 
