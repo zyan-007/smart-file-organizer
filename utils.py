@@ -14,8 +14,9 @@ def get_category(file_name, categories):
 
 
 def log_action(message):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with open("organizer.log", "a") as f:
-        f.write(message + "\n")
+        f.write(f"[{timestamp}] {message}\n")
 
 
 def get_unique_filename(path):
