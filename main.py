@@ -12,6 +12,7 @@ def main():
     parser.add_argument("--undo", action="store_true", help="Undo last operation")
     parser.add_argument("--min-size", type=int, default=0, help="Minimum file size in bytes")
     parser.add_argument("--by-date", action="store_true", help="Organize by year/month")
+    parser.add_argument("--no-log", action="store_true", help="Disable logging")
 
     args = parser.parse_args()
 
@@ -28,7 +29,8 @@ def main():
         dry_run=args.dry_run,
         recursive=args.recursive,
         min_size=args.min_size,
-        by_date=args.by_date
+        by_date=args.by_date,
+        enable_log=not args.no_log
     )
 
 
