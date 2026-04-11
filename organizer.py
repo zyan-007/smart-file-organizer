@@ -5,7 +5,7 @@ from config import load_config, get_ignore_folders
 from history import record_move
 
 
-def organize_files(path, dry_run=False, recursive=False, min_size=0, by_date=False):
+def organize_files(path, dry_run=False, recursive=False, min_size=0, by_date=False, enable_log=True):
     if not os.path.exists(path):
         print("Invalid path")
         return
@@ -13,23 +13,33 @@ def organize_files(path, dry_run=False, recursive=False, min_size=0, by_date=Fal
     categories = load_config()
     ignore_folders = get_ignore_folders(categories)
 
-    count = 0
+    all_files = []
 
-    for item in os.listdir(path):
-        full_path = os.path.join(path, item)
+    # collect files first (for progress)
+    for root, dirs, files in os.walk(path):
+        if not recursive:
+            dirs.clear()
 
-        if os.path.isdir(full_path):
-            if recursive and item not in ignore_folders:
-                organize_files(full_path, dry_run, recursive, min_size, by_date)
-            continue
+        dirs[:] = [d for d in dirs if d not in ignore_folders]
 
-        if process_file(path, item, categories, dry_run, min_size, by_date):
-            count += 1
+        for file in files:
+            all_files.append((root, file))
 
-    print(f"\nProcessed {count} files in: {path}")
+    total = len(all_files)
+    processed = 0
+
+    print(f"Total files to process: {total}\n")
+
+    for base_path, file in all_files:
+        if process_file(base_path, file, categories, dry_run, min_size, by_date, enable_log):
+            processed += 1
+
+        print(f"[{processed}/{total}] Processed", end="\r")
+
+    print(f"\n\nCompleted. {processed} files organized.")
 
 
-def process_file(base_path, file, categories, dry_run, min_size, by_date):
+def process_file(base_path, file, categories, dry_run, min_size, by_date, enable_log):
     full_path = os.path.join(base_path, file)
 
     if not os.path.isfile(full_path):
@@ -40,7 +50,6 @@ def process_file(base_path, file, categories, dry_run, min_size, by_date):
 
     category = get_category(file, categories)
 
-    # date-based structure
     if by_date:
         year, month = get_file_date(full_path)
         target_dir = os.path.join(base_path, category, year, month)
@@ -62,8 +71,11 @@ def process_file(base_path, file, categories, dry_run, min_size, by_date):
         shutil.move(full_path, target_path)
         record_move(full_path, target_path)
 
-        print(f"Moved {file} -> {target_dir}")
-        log_action(f"Moved {file} -> {target_dir}")
+        message = f"Moved {file} -> {target_dir}"
+        print(message)
+
+        if enable_log:
+            log_action(message)
 
         return True
 
