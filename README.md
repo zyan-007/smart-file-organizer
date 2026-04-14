@@ -17,3 +17,4 @@ Smart File Organizer is a Python-based command-line tool that automatically orga
 ---
 
 ## Project Structure
+the project is almost complete
